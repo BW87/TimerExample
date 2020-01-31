@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private Button start;
     private Button cancel;
     private Context mContext =this;
+    private int id = 8722;
     public MainActivity(){
 
     }
@@ -25,8 +26,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = new Intent(this, MyReceiver.class);
+        PendingIntent checker = PendingIntent.getBroadcast(this, id, intent, PendingIntent.FLAG_NO_CREATE);
 
-
+        if(checker==null){
+            alarm(mContext, 60);
+        }
         start = (Button) findViewById(R.id.button);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "반복 시작", Toast.LENGTH_SHORT).show();
             }
         });
+
         cancel = (Button) findViewById(R.id.button2);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent myIntent = new Intent(MainActivity.this, MyReceiver.class);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, myIntent, 0);
                 alarmManager.cancel(pendingIntent);
+                pendingIntent.cancel();
                 Toast.makeText(getApplicationContext(), "반복 중단", Toast.LENGTH_SHORT).show();
             }
         });
@@ -53,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         t =t+(second*1000);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = new Intent(context, MyReceiver.class);
+        myIntent.putExtra("id", 8722);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, t, pendingIntent);
